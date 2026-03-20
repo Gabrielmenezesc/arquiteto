@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Augusto | Meta-Arquitetura Futurista</title>
+  <meta name="description" content="Pioneiro na fusão entre engenharia clássica e inteligência generativa. Meta-Arquitetura Multidimensional por Augusto." />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Three.js & Controls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;700;800&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Screen border glow -->
+  <div class="hud-border"></div>
+
+  <!-- Scanline -->
+  <div class="scanline"></div>
+
+  <!-- Noise overlay -->
+  <div class="noise-overlay"></div>
+
+  <!-- Corner decorations -->
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <!-- Cursor follower removed — cursor normal -->
+
+  <!-- Navigation -->
+  <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-[100]" id="main-nav">
+    <div class="nav-pill">
+      <button onclick="showSection('home')" id="nav-home" class="nav-btn active" aria-label="Início">
+        <i class="fa-solid fa-house nav-icon"></i>
+        <span>Início</span>
+      </button>
+      <div class="nav-sep"></div>
+      <button onclick="showSection('sobre')" id="nav-sobre" class="nav-btn" aria-label="O Arquiteto">
+        <i class="fa-solid fa-user nav-icon"></i>
+        <span>O Arquiteto</span>
+      </button>
+      <div class="nav-sep"></div>
+      <button onclick="showSection('servicos')" id="nav-servicos" class="nav-btn" aria-label="Serviços">
+        <i class="fa-solid fa-cubes nav-icon"></i>
+        <span>Serviços</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- System status bar (top left) -->
+  <div class="sys-bar sys-bar-left" id="sys-left">
+    <span class="sys-tag">SYS.ONLINE</span>
+    <span class="sys-dot"></span>
+    <span class="sys-tag dim" id="sys-clock">00:00:00</span>
+  </div>
+
+  <!-- Agent status bar (top right) -->
+  <div class="sys-bar sys-bar-right" id="sys-right">
+    <span class="sys-tag dim">AUGUSTO.v2</span>
+    <span class="sys-dot pulse-green"></span>
+    <span class="sys-tag cyan">IA ATIVA</span>
+  </div>
+
+  <!-- UI Layer -->
+  <main class="ui-layer" id="ui-layer">
+
+    <!-- ── HOME ───────────────────────────────── -->
+    <section id="home" class="page-section active">
+      <div class="hero-content" id="hero-content">
+
+        <!-- Agent badge -->
+        <div class="agent-badge" id="agent-badge">
+          <span class="agent-orb-sm"></span>
+          <span class="agent-label">Sistema de IA Ativo: Augusto.v2</span>
+        </div>
+
+        <!-- Title -->
+        <h1 class="hero-h1" id="hero-h1">
+          Arquitetura<br />
+          <span class="gradient-text">Multidimensional</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="hero-sub" id="hero-sub">
+          Bem-vindo ao futuro da construção. Aqui, não apenas desenhamos;<br />
+          simulamos a realidade antes mesmo de ela existir.<br />
+          <span class="text-white/70">Experiencie a sua obra de dentro para fora.</span>
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="cta-row" id="cta-row">
+          <a
+            href="https://wa.me/5511999999999"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary"
+            id="btn-whatsapp"
+            aria-label="Iniciar consultoria via WhatsApp"
+          >
+            <i class="fa-brands fa-whatsapp"></i>
+            <div class="btn-txt">
+              <span>Iniciar Consultoria</span>
+              <small>via WhatsApp</small>
+            </div>
+            <span class="btn-shine"></span>
+          </a>
+
+          <button
+            onclick="startSimulation()"
+            class="btn-ghost"
+            id="btn-sim"
+            aria-label="Simular obra do zero"
+          >
+            <i class="fa-solid fa-cube"></i>
+            <div class="btn-txt">
+              <span>Simular Obra</span>
+              <small>do Zero</small>
+            </div>
+            <span class="btn-border-run"></span>
+          </button>
+        </div>
+
+        <!-- Stat chips -->
+        <div class="stat-chips" id="stat-chips">
+          <div class="chip"><span class="chip-val" data-target="98">0</span><span>%</span><span class="chip-lbl">Precisão IA</span></div>
+          <div class="chip-sep"></div>
+          <div class="chip"><span class="chip-val" data-target="150">0</span><span>+</span><span class="chip-lbl">Projetos</span></div>
+          <div class="chip-sep"></div>
+          <div class="chip"><span class="chip-val" data-target="8">0</span><span>x</span><span class="chip-lbl">Mais Rápido</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── SOBRE ──────────────────────────────── -->
+    <section id="sobre" class="page-section">
+      <div class="sobre-content" id="sobre-content">
+
+        <div class="sobre-tag">
+          <i class="fa-solid fa-circle-nodes"></i>
+          Perfil do Especialista
+        </div>
+
+        <h2 class="sobre-h2">Augusto</h2>
+
+        <p class="sobre-para">
+          Pioneiro na fusão entre engenharia clássica e inteligência generativa. Com uma base técnica sólida em
+          <strong class="text-white">AutoCAD</strong>, <strong class="text-white">Revit</strong> e <strong class="text-white">3ds Max</strong>,
+          Augusto domina desde o rigor do desenho técnico à sofisticação da visualização fotorrealista.
+        </p>
+        <p class="sobre-para">
+          <span class="text-cyan font-semibold">Pós-graduado em Arquitetura para IA</span>, ele especializou-se em algoritmos que otimizam processos construtivos,
+          permitindo a criação de projetos complexos, sustentáveis e visualmente arrebatadores.
+        </p>
+
+        <div class="skills-grid">
+          <div class="skill-card">
+            <i class="fa-solid fa-drafting-compass skill-icon"></i>
+            <span class="skill-title">BIM & CAD</span>
+            <span class="skill-sub">AutoCAD / Revit</span>
+          </div>
+          <div class="skill-card">
+            <i class="fa-solid fa-film skill-icon"></i>
+            <span class="skill-title">CGI Expert</span>
+            <span class="skill-sub">3ds Max / V-Ray</span>
+          </div>
+          <div class="skill-card">
+            <i class="fa-solid fa-brain skill-icon"></i>
+            <span class="skill-title">AI Master</span>
+            <span class="skill-sub">Pós-Graduado IA</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── SERVIÇOS ───────────────────────────── -->
+    <section id="servicos" class="page-section">
+      <div class="servicos-content" id="servicos-content">
+
+        <div class="servicos-header">
+          <div class="sobre-tag"><i class="fa-solid fa-layer-group"></i> Operações Disponíveis</div>
+          <h2 class="servicos-h2">Nossas<br /><span class="gradient-text">Operações</span></h2>
+        </div>
+
+        <div class="cards-grid">
+          <div class="svc-card" id="sc1">
+            <div class="svc-num">01</div>
+            <i class="fa-solid fa-building svc-icon"></i>
+            <h3 class="svc-title">Meta-Construção</h3>
+            <p class="svc-desc">Desenvolvimento de estruturas complexas com fluxos de trabalho avançados em BIM e renderização 3ds Max.</p>
+            <div class="svc-line"></div>
+          </div>
+          <div class="svc-card" id="sc2">
+            <div class="svc-num">02</div>
+            <i class="fa-solid fa-wand-magic-sparkles svc-icon"></i>
+            <h3 class="svc-title">Arquitetura Generativa</h3>
+            <p class="svc-desc">Uso de IA para gerar formas orgânicas e otimização de materiais em tempo real com algoritmos generativos.</p>
+            <div class="svc-line"></div>
+          </div>
+          <div class="svc-card" id="sc3">
+            <div class="svc-num">03</div>
+            <i class="fa-solid fa-vr-cardboard svc-icon"></i>
+            <h3 class="svc-title">Visualização Imersiva</h3>
+            <p class="svc-desc">Caminhadas virtuais fotorrealistas para que veja cada detalhe da sua obra antes mesmo de começar.</p>
+            <div class="svc-line"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Build Controls (Simulation Mode) -->
+  <div class="build-hud" id="build-controls">
+    <div class="build-hud-header">
+      <i class="fa-solid fa-circle text-xs text-cyan animate-pulse"></i>
+      <span>Controlo de Obra</span>
+    </div>
+    <!-- View toggle -->
+    <div class="view-toggle-row">
+      <button onclick="setView('exterior')" class="view-btn active" id="vbtn-exterior">
+        <i class="fa-solid fa-building"></i> Fachada
+      </button>
+      <button onclick="setView('interior')" class="view-btn" id="vbtn-interior">
+        <i class="fa-solid fa-door-open"></i> Interior
+      </button>
+    </div>
+    <div class="build-steps">
+      <button onclick="buildStage(0)" class="build-step" id="bs0">
+        <span class="bs-num">01</span>
+        <span class="bs-label">Estrutura do Condomínio</span>
+        <span class="bs-status" id="bst0"></span>
+      </button>
+      <button onclick="buildStage(1)" class="build-step" id="bs1">
+        <span class="bs-num">02</span>
+        <span class="bs-label">Planta do Apartamento</span>
+        <span class="bs-status" id="bst1"></span>
+      </button>
+      <button onclick="buildStage(2)" class="build-step" id="bs2">
+        <span class="bs-num">03</span>
+        <span class="bs-label">Mobiliário Completo</span>
+        <span class="bs-status" id="bst2"></span>
+      </button>
+    </div>
+    <button onclick="toggleWalkMode()" id="walk-btn" class="walk-toggle">
+      <i class="fa-solid fa-person-walking" id="walk-icon"></i>
+      <span id="walk-label">Modo Caminhada: OFF</span>
+    </button>
+    <button onclick="exitSimulation()" class="exit-sim-btn">
+      <i class="fa-solid fa-xmark"></i> Sair da Simulação
+    </button>
+  </div>
+
+  <!-- Walk mode tips -->
+  <div id="movement-tips" class="movement-tips">
+    <i class="fa-solid fa-gamepad"></i>
+    Use <kbd>W A S D</kbd> ou <kbd>↑ ← ↓ →</kbd> para mover &nbsp;·&nbsp; Mouse para olhar
+  </div>
+
+  <!-- Data stream footer -->
+  <div class="data-footer" id="data-footer">
+    <span class="df-tag">◉ -15.7942° S / -47.8825° W</span>
+    <div class="df-bars">
+      <div class="df-bar"></div><div class="df-bar"></div><div class="df-bar"></div>
+      <div class="df-bar"></div><div class="df-bar"></div><div class="df-bar"></div>
+    </div>
+    <span class="df-tag">LAT: <span class="text-cyan">2ms</span></span>
+  </div>
+
+  <!-- Pointer Lock Overlay -->
+  <div id="blocker">
+    <div id="instructions">
+      <i class="fa-solid fa-person-walking" style="font-size:48px; margin-bottom: 20px; color: var(--primary);"></i>
+      <h2 style="font-size:32px; font-weight:800; margin-bottom: 24px; font-family:var(--font-body);">VR Ativado</h2>
+      <p class="inst-txt">Clique na tela para entrar</p>
+      <div class="keys-grid">
+        <div class="key-item"><kbd>W</kbd> Frente</div>
+        <div class="key-item"><kbd>S</kbd> Trás</div>
+        <div class="key-item"><kbd>A</kbd> Esquerda</div>
+        <div class="key-item"><kbd>D</kbd> Direita</div>
+      </div>
+      <p class="inst-sub">Use o <strong>Mouse</strong> para olhar ao redor.<br/>Pressione <strong>ESC</strong> para soltar o ponteiro ou sair.</p>
+    </div>
+  </div>
+
+  <!-- Crosshair (shown only in walk mode via body.walk-active) -->
+  <div id="crosshair" class="crosshair">
+    <div class="ch-h"></div>
+    <div class="ch-v"></div>
+    <div class="ch-dot"></div>
+  </div>
+
+  <!-- Main 3D canvas -->
+  <canvas id="main-canvas"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
