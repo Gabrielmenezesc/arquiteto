@@ -140,13 +140,15 @@ function makeMarbleTex(w=512, h=512) {
 
 let TEX = {};
 function buildTextures() {
-  TEX.wood = makeWoodTex(); TEX.tile = makeTileTex();
-  TEX.plaster = makePlasterTex(); TEX.plasterBlue = makePlasterTex(512,512,'#D8E4ED');
-  TEX.carpet = makeCarpetTex(); TEX.fabric = makeFabricTex(); TEX.marble = makeMarbleTex();
+  TEX.wood = makeWoodTex(256,256); TEX.tile = makeTileTex(256,256);
+  TEX.plaster = makePlasterTex(256,256); TEX.plasterBlue = makePlasterTex(256,256,'#D8E4ED');
+  TEX.carpet = makeCarpetTex(256,256); TEX.fabric = makeFabricTex(128,128); TEX.marble = makeMarbleTex(256,256);
 }
 
 function mat(color=0xffffff, options={}) {
-  return new THREE.MeshStandardMaterial({ color, roughness:.8, metalness:0, ...options });
+  // Switched to MeshLambertMaterial for pure performance while retaining basic lighting
+  const { roughness, metalness, ...fastOptions } = options;
+  return new THREE.MeshLambertMaterial({ color, ...fastOptions });
 }
 
 // ═══════════════════════════════════════════════
@@ -162,11 +164,11 @@ function init() {
   camera = new THREE.PerspectiveCamera(72, window.innerWidth/window.innerHeight, 0.05, 400);
   camera.position.set(0, 16, 62);
 
-  renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#main-canvas'), antialias: true });
+  renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#main-canvas'), antialias: false }); // Disabled antialiasing for performance
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25)); // Cap pixel ratio for mobile
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFShadowMap; // Cheaper shadows
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.25;
   renderer.outputEncoding = THREE.sRGBEncoding;
@@ -179,10 +181,10 @@ function init() {
 }
 
 function initLights() {
-  scene.add(new THREE.AmbientLight(0x88aacc, 0.35));
-  const sun = new THREE.DirectionalLight(0xfff5dd, 1.2);
+  scene.add(new THREE.AmbientLight(0x88aacc, 0.45)); // Slightly boosted ambient to compensate for Lambert
+  const sun = new THREE.DirectionalLight(0xfff5dd, 1.0);
   sun.position.set(40, 70, 30); sun.castShadow = true;
-  sun.shadow.mapSize.set(2048,2048);
+  sun.shadow.mapSize.set(512,512); // Greatly reduced shadow map size
   sun.shadow.camera.near = 1; sun.shadow.camera.far = 200;
   [-70,70].forEach(v => { sun.shadow.camera.left=sun.shadow.camera.bottom=v; sun.shadow.camera.right=sun.shadow.camera.top=-v; });
   scene.add(sun);
@@ -190,10 +192,10 @@ function initLights() {
   scene.add(new THREE.DirectionalLight(0x4488cc, 0.4));
   const skyFill = new THREE.DirectionalLight(0x4488cc, 0.4); skyFill.position.set(-30, 20, -10); scene.add(skyFill);
 
-  // Interior warm ceiling lights
+  // Interior warm ceiling lights (Shadows disabled for performance)
   [[0, 2.9, 3], [5, 2.9, -3], [-4, 2.9, -3]].forEach(([x,y,z]) => {
     const l = new THREE.PointLight(0xFFE4B0, 1.4, 12);
-    l.position.set(x,y,z); l.castShadow = true; l.shadow.mapSize.set(512,512); scene.add(l);
+    l.position.set(x,y,z); scene.add(l);
   });
 
   orbLight = new THREE.PointLight(0x00f2ff, 2, 30); scene.add(orbLight);
